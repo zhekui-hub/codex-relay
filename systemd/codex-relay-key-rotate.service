@@ -1,0 +1,12 @@
+[Unit]
+Description=Rotate loopback Codex relay upstream credential
+After=codex-relay-nginx.service
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=/bin/bash %h/.local/share/codex-relay/rotate-upstream-auth.sh
+MemoryMax=32M
+CPUQuota=10%
+TasksMax=32
+NoNewPrivileges=yes

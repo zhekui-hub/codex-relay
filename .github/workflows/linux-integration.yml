@@ -1,0 +1,32 @@
+# Author: zhekui
+# Purpose: Exercise relay installation in an isolated Linux systemd container.
+# No functions; the workflow builds a disposable container and runs the harness.
+name: Linux installer integration
+on:
+  workflow_dispatch:
+  push:
+    branches: ['integration-*']
+permissions:
+  contents: read
+jobs:
+  install:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Build isolated Linux environment
+        run: docker build -t relay-test -f tests/Dockerfile .
+      - name: Run systemd container
+        run: |
+          docker run -d --name relay-test --privileged --cgroupns=host -e RELAY_TEST_DISPOSABLE=1 \
+            -v /sys/fs/cgroup:/sys/fs/cgroup:rw -v "$GITHUB_WORKSPACE:/workspace:ro" relay-test
+      - name: Test interactive install and relay
+        run: docker exec relay-test python3 /workspace/tests/linux_integration.py
+      - name: Collect disposable container diagnostics
+        if: failure()
+        run: docker logs --tail 100 relay-test || true
+      - name: Stop disposable environment
+        if: always()
+        run: docker rm -f relay-test || true

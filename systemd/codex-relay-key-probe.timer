@@ -1,0 +1,11 @@
+[Unit]
+Description=Probe Codex relay candidate credentials every minute from 08:00 to 21:59
+
+[Timer]
+OnCalendar=*-*-* 08..21:*:00
+AccuracySec=1s
+RandomizedDelaySec=0
+Unit=codex-relay-key-probe.service
+
+[Install]
+WantedBy=timers.target

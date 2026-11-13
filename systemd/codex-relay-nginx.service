@@ -1,0 +1,30 @@
+[Unit]
+Description=Loopback Codex API relay (nginx)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+PIDFile=%h/.local/share/codex-relay/nginx/nginx.pid
+ExecStartPre=/home/relay-user/.local/share/codex-relay/bin/nginx -t -g 'error_log %h/.local/share/codex-relay/nginx/logs/error.log warn;' -p %h/.local/share/codex-relay/nginx -c nginx.conf
+ExecStart=/home/relay-user/.local/share/codex-relay/bin/nginx -g 'error_log %h/.local/share/codex-relay/nginx/logs/error.log warn;' -p %h/.local/share/codex-relay/nginx -c nginx.conf
+ExecReload=/home/relay-user/.local/share/codex-relay/bin/nginx -g 'error_log %h/.local/share/codex-relay/nginx/logs/error.log warn;' -p %h/.local/share/codex-relay/nginx -c nginx.conf -s reload
+ExecStop=/home/relay-user/.local/share/codex-relay/bin/nginx -g 'error_log %h/.local/share/codex-relay/nginx/logs/error.log warn;' -p %h/.local/share/codex-relay/nginx -c nginx.conf -s quit
+Restart=on-failure
+RestartSec=5
+MemoryMax=128M
+CPUQuota=25%
+TasksMax=64
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ProtectControlGroups=yes
+ProtectKernelTunables=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+ReadWritePaths=%h/.local/share/codex-relay/nginx
+UMask=0077
+
+[Install]
+WantedBy=default.target

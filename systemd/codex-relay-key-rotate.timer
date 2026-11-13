@@ -1,0 +1,13 @@
+[Unit]
+Description=Rotate loopback Codex relay upstream credential every 30 minutes
+
+[Timer]
+OnCalendar=*-*-* *:00:00
+OnCalendar=*-*-* *:30:00
+Persistent=true
+AccuracySec=1s
+RandomizedDelaySec=0
+Unit=codex-relay-key-rotate.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Probe Codex relay candidate credentials and rebuild rotation pool
+After=network-online.target codex-relay-nginx.service
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=/bin/bash %h/.local/share/codex-relay/probe-upstream-keys.sh
+MemoryMax=32M
+CPUQuota=10%
+TasksMax=32
+NoNewPrivileges=yes
